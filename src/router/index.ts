@@ -8,6 +8,24 @@ const routes: Array<RouteRecordRaw> = [
     component: Home
   },
   {
+    path: '/user',
+    name: 'User',
+    component: () => import(/* webpackChunkName: "user" */ '../views/user/index.vue'),
+    redirect: '/user/login',
+    children:[
+      {
+        path: 'login',
+        name: 'Login',
+        component: () => import(/* webpackChunkName: "user" */ '../views/user/login.vue')
+      },
+      {
+        path: 'register',
+        name: 'Register',
+        component: () => import(/* webpackChunkName: "user" */ '../views/user/register.vue')
+      }
+    ]
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
