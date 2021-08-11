@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div style="padding: 20px 50px;">
     <div id='target-dom'>
       <div id='top-helper'></div>
       <div v-for="value in choices" :key="value" style="height: 30px">{{value}}</div>
@@ -12,18 +12,18 @@
 import { defineComponent, ref, onMounted } from 'vue'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const testValue = require('../assets/test.json');
-let targetDom, targetTopDom, targetBottomDom;
+const testValue = require('../../assets/test.json');
+let targetDom, targetTopDom;
 const choices = ref([]);
-let pageNum = 1;
-let minCache = 20;
-let everyReqNum = 40;
+let pageNum = 0;
+let everyReqNum = 20;
+let total = 111;
 
 export default defineComponent({
   setup() {
     
     
-    choices.value = getData(pageNum, minCache*3);
+    choices.value = getData(everyReqNum*2);
 
     onMounted(afterMounted);
     
@@ -37,7 +37,6 @@ export default defineComponent({
 function afterMounted(){
   targetDom = document.querySelector("#target-dom");
   targetTopDom = document.querySelector("#top-helper");
-  targetBottomDom = document.querySelector("#bottom-helper");
   // console.log(target-dom);
   
   addEvent(targetDom, 'mousewheel', handleScroll)
@@ -46,25 +45,33 @@ function afterMounted(){
 }
 
 function handleScroll(e){
-  let a = targetDom.scrollHeight;
   let b = targetDom.scrollTop;
-  let c = targetDom.clientHeight;
 
-  if(e.deltaY>0 && b>=(pageNum*everyReqNum+minCache)*30){
-    console.log(b)
-    targetTopDom.style.height = pageNum*everyReqNum*30+'px';
+  if(e.deltaY>0 && ((pageNum+2)*everyReqNum)<total && b>=(pageNum*everyReqNum)*30 ){
+    console.log('down', pageNum, b);
+    if(pageNum>1){
+      targetTopDom.style.height = (pageNum-1)*everyReqNum*30+'px';
+      choices.value.splice(0, everyReqNum);
+    }
+
     pageNum+=1;
-    choices.value.splice(0, everyReqNum);
-    choices.value.splice(choices.value.length, 0, ...getData1(pageNum));
+    choices.value.splice(choices.value.length, 0, ...getData1(pageNum+1));
     
   }
 
-  if(e.deltaY<0 && b<((pageNum-1)*everyReqNum+minCache)*30 ){
-    console.log(b)
+  if(e.deltaY<0 && pageNum>1 && b<((pageNum-1)*everyReqNum)*30){
+    console.log('up', pageNum, b);
+
+    if(pageNum>2){
+      targetTopDom.style.height = ((pageNum-3)*everyReqNum)*30+'px';
+      choices.value.splice(0,0,...getData1(pageNum-3));
+      choices.value.splice(4*everyReqNum, everyReqNum);
+    }
+    else{
+      choices.value.splice(3*everyReqNum, everyReqNum);
+    }
+
     pageNum-=1;
-    targetTopDom.style.height = (pageNum-1)*everyReqNum*30+'px';
-    choices.value.splice(choices.value.length-everyReqNum, everyReqNum);
-    choices.value.splice(0,0,...getData2(pageNum));
   }
 
   // console.log(a, b, c);
@@ -80,17 +87,14 @@ function addEvent(obj, xEvent, fn){
   }
 }
 
-function getData(pageN, minC=0){
-  return testValue.slice((pageN-1)*everyReqNum, pageN*everyReqNum+minC);
+function getData(num=0){
+  return testValue.slice(0, num);
 }
 
 function getData1(pageN){
-  return testValue.slice((pageN-1)*everyReqNum+3*minCache, pageN*everyReqNum+3*minCache);
+  return testValue.slice(Math.max(pageN*everyReqNum,0), Math.min((pageN+1)*everyReqNum, total));
 }
 
-function getData2(pageN){
-  return testValue.slice((pageN-1)*everyReqNum, pageN*everyReqNum);
-}
 </script>
 
 <style>

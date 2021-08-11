@@ -1,9 +1,13 @@
 <template>
   <div class="home">
-    <router-link to='/user/login'>登录</router-link>
-    <router-link to='/user/register'>注册</router-link>
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
+    <p>
+      <router-link to='/user/login'>登录</router-link> | 
+      <router-link to='/user/register'>注册</router-link>
+    </p>
+    <p>
+      <router-link to="/demo/oncereq">onceReq</router-link> |
+      <router-link to="/demo/twicereq">twiceReq</router-link>
+    </p>
   </div>
 </template>
 
