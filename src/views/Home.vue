@@ -5,9 +5,12 @@
       <router-link to='/user/register'>注册</router-link>
     </p>
     <p>
-      <router-link to="/demo/oncereq">onceReq</router-link> |
-      <router-link to="/demo/twicereq">twiceReq</router-link> | 
-      <router-link to="/demo/parentcompo">ParentCompo</router-link>
+      <router-link to="/demo-infinite-scroll/oncereq">onceReq</router-link> |
+      <router-link to="/demo-infinite-scroll/twicereq">twiceReq</router-link> | 
+      <router-link to="/demo-infinite-scroll/parentcompo">ParentCompo</router-link>
+    </p>
+    <p>
+      <router-link to='/demo-antv/layout'>layout布局</router-link>
     </p>
   </div>
 </template>

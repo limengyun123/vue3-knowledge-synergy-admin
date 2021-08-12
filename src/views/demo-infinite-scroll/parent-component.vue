@@ -13,7 +13,7 @@
 <script>
 
 import { defineComponent, ref } from 'vue';
-import ChildrenCompo from './ChildrenCompo.vue';
+import ChildrenCompo from './children-component.vue';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

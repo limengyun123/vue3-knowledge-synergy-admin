@@ -29,32 +29,47 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/demo",
-    name: "User",
+    path: "/demo-infinite-scroll",
+    name: "DemoInfiniteScroll",
     component: () =>
-      import(/* webpackChunkName: "demo" */ "../views/demo/index.vue"),
-    redirect: "/demo/oncereq",
+      import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/index.vue"),
+    redirect: "/demo-infinite-scroll/oncereq",
     children: [
       {
         path: "oncereq",
         name: "OnceReq",
         component: () =>
-          import(/* webpackChunkName: "demo" */ "../views/demo/OnceReq.vue"),
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/once-req.vue"),
       },
       {
         path: "twicereq",
         name: "TwiceReq",
         component: () =>
-          import(/* webpackChunkName: "demo" */ "../views/demo/TwiceReq.vue"),
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/twice-req.vue"),
       },
       {
         path: "parentcompo",
         name: "ParentCompo",
         component: () =>
-          import(/* webpackChunkName: "demo" */ "../views/demo/ParentCompo.vue"),
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-component.vue"),
       },
     ],
   },
+  {
+    path: "/demo-antv",
+    name: "DemoAntV",
+    component: () =>
+      import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/index.vue"),
+    redirect: "/demo-antv/oncereq",
+    children: [
+      {
+        path: "layout",
+        name: "Layout",
+        component: () =>
+          import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/modify-layout.vue"),
+      },
+    ]
+  }
 ];
 
 const router = createRouter({
