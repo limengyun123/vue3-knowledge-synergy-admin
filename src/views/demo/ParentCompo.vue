@@ -1,7 +1,7 @@
 <template>
   <div style="width: 800; height: 700; overflow: auto;">
     <a-checkbox-group v-model:value="checkboxSelectedValues" >
-      <children-compo @checkBoxClick="handleCheckBoxClick" :reqData="reqData" :pageSize="pageSize" :slotHeight="30">
+      <children-compo @checkBoxClick="handleCheckBoxClick" :reqData="reqData" :updateSelected="updateSelectedValues" :pageSize="pageSize" :slotHeight="30">
         <template v-slot:default="slotProps">
           <a-checkbox :value="slotProps.checkValue" style="height: 30px;">{{ slotProps.checkValue }}</a-checkbox>
         </template>
@@ -33,14 +33,11 @@ export default defineComponent({
 
     const handleCheckBoxClick = (val)=>{
       if (val != undefined) {
-        // val = parseInt(val);
+        val = parseInt(val);
         const index = checkboxTrueValues.indexOf(val);
         if (index == -1) checkboxTrueValues.push(val);
         else checkboxTrueValues.splice(index, 1);
       }
-      // checkboxSelectedValues.value = checkboxTrueValues;
-      console.log('checkboxTrueValues', checkboxTrueValues);
-      console.log('checkboxSelectedValues', checkboxSelectedValues.value);
     }
 
     const reqData = (pageN)=>{
@@ -50,13 +47,19 @@ export default defineComponent({
       };
     }
 
+    const updateSelectedValues = ()=>{
+      console.log("here");
+      checkboxSelectedValues.value = [...checkboxTrueValues];
+    }
+
 
     return {
       pageNumber,
       pageSize,
       checkboxSelectedValues,
       handleCheckBoxClick,
-      reqData
+      reqData,
+      updateSelectedValues
     }
   }
 });

@@ -17,11 +17,12 @@ export default defineComponent({
   props:{
     pageSize: Number,
     slotHeight: Number,
-    reqData: Function
+    reqData: Function,
+    updateSelected: Function
   },
   setup(props, context) {
 
-    const {pageSize, slotHeight, reqData} = toRaw(props);
+    const {pageSize, slotHeight, reqData, updateSelected} = toRaw(props);
     const checkboxFixedValues = ref([]);
 
     let pageNum = 0;
@@ -30,7 +31,7 @@ export default defineComponent({
 
 
     const handleClick = (e)=>{
-      context.emit('checkBoxClick', e.target.defaultValue)
+      context.emit('checkBoxClick', e.target.defaultValue);
     }
 
     
@@ -46,6 +47,7 @@ export default defineComponent({
 
         pageNum+=1;
         checkboxFixedValues.value.splice(checkboxFixedValues.value.length, 0, ...(reqData(pageNum+1).results));
+        updateSelected();
       }
 
       if(e.deltaY<0 && pageNum>1 && b<((pageNum-1)*pageSize)*slotHeight){
@@ -54,6 +56,7 @@ export default defineComponent({
           targetTopDom.style.height = ((pageNum-3)*pageSize)*slotHeight+'px';
           checkboxFixedValues.value.splice(0,0,...(reqData(pageNum-3).results));
           checkboxFixedValues.value.splice(4*pageSize, pageSize);
+          updateSelected();
         }
         else{
           checkboxFixedValues.value.splice(3*pageSize, pageSize);
