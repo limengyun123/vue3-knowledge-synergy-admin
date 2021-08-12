@@ -3,7 +3,6 @@
     <div id='target-dom'>
       <div id='top-helper'></div>
       <div v-for="value in choices" :key="value" style="height: 30px">{{value}}</div>
-      <div id='bottom-helper'></div>
     </div>
   </div>
 </template>
@@ -16,7 +15,7 @@ const testValue = require('../../assets/test.json');
 let targetDom, targetTopDom;
 const choices = ref([]);
 let pageNum = 0;
-let everyReqNum = 20;
+let everyReqNum = 10;
 let total = 111;
 
 export default defineComponent({

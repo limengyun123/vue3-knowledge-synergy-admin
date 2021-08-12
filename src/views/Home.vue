@@ -7,6 +7,7 @@
     <p>
       <router-link to="/demo/oncereq">onceReq</router-link> |
       <router-link to="/demo/twicereq">twiceReq</router-link>
+      <router-link to="/demo/parentCompo">twiceReq</router-link>
     </p>
   </div>
 </template>
