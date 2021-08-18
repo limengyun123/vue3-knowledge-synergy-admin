@@ -7,10 +7,16 @@
     <p>
       <router-link to="/demo-infinite-scroll/oncereq">onceReq</router-link> |
       <router-link to="/demo-infinite-scroll/twicereq">twiceReq</router-link> | 
-      <router-link to="/demo-infinite-scroll/parentcompo">ParentCompo</router-link>
+      <router-link to="/demo-infinite-scroll/parentcompo">parentCompo</router-link> | 
+      <router-link to="/demo-infinite-scroll/selectall">parentCompoSelectAll</router-link> | 
+      <router-link to="/demo-infinite-scroll/drag">drag</router-link>
     </p>
     <p>
       <router-link to='/demo-antv/layout'>layout布局</router-link>
+    </p>
+    <p>
+      <router-link to='/demo-ant-design/dropdown'>dropdown</router-link> | 
+      <router-link to='/demo-ant-design/ref'>ref</router-link>
     </p>
   </div>
 </template>

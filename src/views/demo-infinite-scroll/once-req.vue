@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 20px 50px;">
-    <div id='target-dom'>
+    <div id='target-dom' :onscroll="handleScroll">
       <div id='top-helper'></div>
       <div v-for="value in choices" :key="value" style="height: 30px">{{value}}</div>
     </div>
@@ -15,8 +15,9 @@ const testValue = require('../../assets/test.json');
 let targetDom, targetTopDom;
 const choices = ref([]);
 let pageNum = 0;
-let everyReqNum = 10;
+let everyReqNum = 20;
 let total = 111;
+let originScrollTop = 0;
 
 export default defineComponent({
   setup() {
@@ -28,7 +29,8 @@ export default defineComponent({
     
     
     return {
-      choices
+      choices,
+      handleScroll
     }
   }
 })
@@ -36,17 +38,14 @@ export default defineComponent({
 function afterMounted(){
   targetDom = document.querySelector("#target-dom");
   targetTopDom = document.querySelector("#top-helper");
-  // console.log(target-dom);
-  
-  addEvent(targetDom, 'mousewheel', handleScroll)
-  addEvent(targetDom, 'DOMMouseScroll', handleScroll)
 
 }
 
-function handleScroll(e){
+function handleScroll(){
+  // console.log('here', e, targetDom.scrollTop);
   let b = targetDom.scrollTop;
 
-  if(e.deltaY>0 && ((pageNum+2)*everyReqNum)<total && b>=(pageNum*everyReqNum)*30 ){
+  if(b>originScrollTop && ((pageNum+2)*everyReqNum)<total && b>=(pageNum*everyReqNum)*30 ){
     console.log('down', pageNum, b);
     if(pageNum>1){
       targetTopDom.style.height = (pageNum-1)*everyReqNum*30+'px';
@@ -58,7 +57,7 @@ function handleScroll(e){
     
   }
 
-  if(e.deltaY<0 && pageNum>1 && b<((pageNum-1)*everyReqNum)*30){
+  if(b<originScrollTop && pageNum>1 && b<((pageNum-1)*everyReqNum)*30){
     console.log('up', pageNum, b);
 
     if(pageNum>2){
@@ -73,18 +72,11 @@ function handleScroll(e){
     pageNum-=1;
   }
 
-  // console.log(a, b, c);
-  // console.log(e);
+  originScrollTop = b;
+
 }
 
-function addEvent(obj, xEvent, fn){
-  if(obj.attachEvent){
-    obj.attachEvent('on'+xEvent, fn);
-  }
-  else{
-    obj.addEventListener(xEvent, fn, false);
-  }
-}
+
 
 function getData(num=0){
   return testValue.slice(0, num);

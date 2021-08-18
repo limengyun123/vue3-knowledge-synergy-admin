@@ -1,5 +1,5 @@
 <template>
-  <div id='target-dom' @click.capture="handleClick">
+  <div id='target-dom' @click.capture="handleClick" :onscroll="handleScroll">
     <div id='top-helper'></div>
     <div v-for="value in checkboxFixedValues" :key="value">
       <slot :checkValue="value"></slot>
@@ -27,6 +27,7 @@ export default defineComponent({
 
     let pageNum = 0;
     let itemTotalNum = 0;
+    let originScrollTop = 0;
     let targetDom, targetTopDom;
 
 
@@ -35,10 +36,10 @@ export default defineComponent({
     }
 
     
-    const handleScroll = (e)=>{
+    const handleScroll = ()=>{
       const b = targetDom.scrollTop;
 
-      if(e.deltaY>0 && ((pageNum+2)*pageSize)<itemTotalNum && b>=(pageNum*pageSize)*slotHeight ){
+      if(b>originScrollTop && ((pageNum+2)*pageSize)<itemTotalNum && b>=(pageNum*pageSize)*slotHeight ){
         console.log('down', pageNum, b);
         if(pageNum>1){
           targetTopDom.style.height = (pageNum-1)*pageSize*slotHeight+'px';
@@ -50,7 +51,7 @@ export default defineComponent({
         updateSelected();
       }
 
-      if(e.deltaY<0 && pageNum>1 && b<((pageNum-1)*pageSize)*slotHeight){
+      if(b<originScrollTop && pageNum>1 && b<((pageNum-1)*pageSize)*slotHeight){
         console.log('up', pageNum, b);
         if(pageNum>2){
           targetTopDom.style.height = ((pageNum-3)*pageSize)*slotHeight+'px';
@@ -64,15 +65,14 @@ export default defineComponent({
 
         pageNum-=1;
       }
+
+      originScrollTop = b;
     }
 
 
     onMounted(()=>{
       targetDom = document.querySelector("#target-dom");
       targetTopDom = document.querySelector("#top-helper");
-      
-      addEvent(targetDom, 'mousewheel', handleScroll);
-      addEvent(targetDom, 'DOMMouseScroll', handleScroll);
 
       const {results, total}= reqData(0);
       itemTotalNum = total;
@@ -84,20 +84,12 @@ export default defineComponent({
 
     return {
       checkboxFixedValues,
-      handleClick
+      handleClick,
+      handleScroll
     }
   }
 });
 
-
-function addEvent(obj, xEvent, fn){
-  if(obj.attachEvent){
-    obj.attachEvent('on'+xEvent, fn);
-  }
-  else{
-    obj.addEventListener(xEvent, fn, false);
-  }
-}
 </script>
 
 <style>

@@ -53,6 +53,18 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-component.vue"),
       },
+      {
+        path: "selectall",
+        name: "SelectAll",
+        component: () =>
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-component-select-all.vue"),
+      },
+      {
+        path: "drag",
+        name: "Drag",
+        component: () =>
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/drag.vue"),
+      },
     ],
   },
   {
@@ -67,6 +79,27 @@ const routes: Array<RouteRecordRaw> = [
         name: "Layout",
         component: () =>
           import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/modify-layout.vue"),
+      },
+    ]
+  },
+  {
+    path: "/demo-ant-design",
+    name: "DemoAntDesign",
+    component: () =>
+      import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-antv/index.vue"),
+    redirect: "/demo-ant-design/dropdown",
+    children: [
+      {
+        path: "dropdown",
+        name: "Dropdown",
+        component: () =>
+          import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-ant-design/table-dropdown.vue"),
+      },
+      {
+        path: "ref",
+        name: "Ref",
+        component: () =>
+          import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-ant-design/variable-ref.vue"),
       },
     ]
   }
