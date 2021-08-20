@@ -14,7 +14,7 @@
 <script>
 
 import { defineComponent, ref, nextTick } from 'vue';
-import ChildrenCompo from './children-component-select-all.vue';
+import ChildrenCompo from './children-mass-memory.vue';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -47,6 +47,7 @@ export default defineComponent({
     }
 
     const reqData = (pageN)=>{
+      console.log('request', pageN);
       return Promise.resolve({
         total:itemTotalNum, 
         results: testValue.slice(Math.max(pageN*pageSize,0), Math.min((pageN+1)*pageSize, itemTotalNum))

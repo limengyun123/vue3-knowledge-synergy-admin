@@ -8,7 +8,8 @@
       <router-link to="/demo-infinite-scroll/oncereq">onceReq</router-link> |
       <router-link to="/demo-infinite-scroll/twicereq">twiceReq</router-link> | 
       <router-link to="/demo-infinite-scroll/parentcompo">parentCompo</router-link> | 
-      <router-link to="/demo-infinite-scroll/selectall">parentCompoSelectAll</router-link> | 
+      <router-link to="/demo-infinite-scroll/selectall">parentSelectAll</router-link> | 
+      <router-link to="/demo-infinite-scroll/massmemory">parentMassMemory</router-link> | 
       <router-link to="/demo-infinite-scroll/drag">drag</router-link>
     </p>
     <p>

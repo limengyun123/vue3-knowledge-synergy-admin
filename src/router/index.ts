@@ -57,7 +57,13 @@ const routes: Array<RouteRecordRaw> = [
         path: "selectall",
         name: "SelectAll",
         component: () =>
-          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-component-select-all.vue"),
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-select-all.vue"),
+      },
+      {
+        path: "massmemory",
+        name: "MassMemory",
+        component: () =>
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-mass-memory.vue"),
       },
       {
         path: "drag",

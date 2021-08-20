@@ -23,19 +23,19 @@ export default defineComponent({
 
     let pageNum = 0;
     let itemTotalNum = 0;
-    let originScrollTop = 0;
-    let targetDom, targetTopDom;
+    let currentScrollTop, originScrollTop = 0;
     let requesting = false;
+    let targetDom, targetTopDom;
 
     const handleClick = (e) => {
       context.emit("checkBoxClick", e.target.defaultValue);
     };
 
     const handleScroll = () => {
-      const b = targetDom.scrollTop;
+      currentScrollTop = targetDom.scrollTop;
 
-      if ( !requesting && b > originScrollTop && (pageNum + 2) * pageSize < itemTotalNum && b >= pageNum * pageSize * slotHeight ) {
-        console.log("down", pageNum, b);
+      if ( !requesting && currentScrollTop > originScrollTop && (pageNum + 2) * pageSize < itemTotalNum && currentScrollTop >= pageNum * pageSize * slotHeight ) {
+        console.log("down", pageNum, currentScrollTop);
         if (pageNum > 1) {
           targetTopDom.style.height = (pageNum - 1) * pageSize * slotHeight + "px";
           checkboxFixedValues.value.splice(0, pageSize);
@@ -44,7 +44,6 @@ export default defineComponent({
         pageNum += 1;
         requesting = true; 
         reqData(pageNum + 1).then((res) => {
-          console.log( res);
           const { results, total } = res;
           itemTotalNum = total;
           checkboxFixedValues.value.splice(checkboxFixedValues.value.length, 0, ...results);
@@ -54,8 +53,8 @@ export default defineComponent({
 
       }
 
-      if ( !requesting && b < originScrollTop && pageNum > 1 && b < (pageNum - 1) * pageSize * slotHeight ) {
-        console.log("up", pageNum, b);
+      if ( !requesting && currentScrollTop < originScrollTop && pageNum > 1 && currentScrollTop < (pageNum - 1) * pageSize * slotHeight ) {
+        console.log("up", pageNum, currentScrollTop);
         if (pageNum > 2) {
           requesting = true; 
           reqData(pageNum - 3).then((res) => {
@@ -76,7 +75,7 @@ export default defineComponent({
         }
       }
 
-      originScrollTop = b;
+      originScrollTop = currentScrollTop;
     };
 
 
@@ -89,20 +88,15 @@ export default defineComponent({
         itemTotalNum = total;
         checkboxFixedValues.value = results;
         if (total > results.length){
-          reqData(0).then((res)=>{
-          const { results } = res;
-          checkboxFixedValues.value.splice(pageSize, 0, ...results);
+          reqData(1).then((res)=>{
+            const { results } = res;
+            checkboxFixedValues.value.splice(pageSize, 0, ...results);
           });
         }
       });
 
     });
 
-      // const { results, total } = requstData(0);
-      // itemTotalNum = total;
-      // checkboxFixedValues.value = results;
-      // if (total > results.length)
-      //   checkboxFixedValues.value.splice(pageSize, 0, ...requstData(1).results);
 
     return {
       checkboxFixedValues,
