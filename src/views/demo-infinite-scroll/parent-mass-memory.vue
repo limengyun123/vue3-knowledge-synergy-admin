@@ -48,10 +48,19 @@ export default defineComponent({
 
     const reqData = (pageN)=>{
       console.log('request', pageN);
-      return Promise.resolve({
-        total:itemTotalNum, 
-        results: testValue.slice(Math.max(pageN*pageSize,0), Math.min((pageN+1)*pageSize, itemTotalNum))
-      });
+      if(pageN==0 || pageN==1) 
+        return Promise.resolve({
+          total:itemTotalNum, 
+          results: testValue.slice(Math.max(pageN*pageSize,0), Math.min((pageN+1)*pageSize, itemTotalNum))
+        });
+        
+      return Math.random()>0.9?
+        Promise.resolve({
+          total:itemTotalNum, 
+          results: testValue.slice(Math.max(pageN*pageSize,0), Math.min((pageN+1)*pageSize, itemTotalNum))
+        })
+      :
+        Promise.reject();
     }
 
     const updateSelectedValues = ()=>{

@@ -19,6 +19,9 @@
       <router-link to='/demo-ant-design/dropdown'>dropdown</router-link> | 
       <router-link to='/demo-ant-design/ref'>ref</router-link>
     </p>
+    <p>
+      <router-link to='/demo-vue3/setup'>setup</router-link>
+    </p>
   </div>
 </template>
 

@@ -69,7 +69,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "drag",
         name: "Drag",
         component: () =>
-          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/drag.vue"),
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/drop.vue"),
       },
     ],
   },
@@ -106,6 +106,21 @@ const routes: Array<RouteRecordRaw> = [
         name: "Ref",
         component: () =>
           import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-ant-design/variable-ref.vue"),
+      },
+    ]
+  },
+  {
+    path: "/demo-vue3",
+    name: "DemoVue3",
+    component: () =>
+      import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/index.vue"),
+    redirect: "/demo-vue3/setup",
+    children: [
+      {
+        path: "setup",
+        name: "setup",
+        component: () =>
+          import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/script-setup.vue"),
       },
     ]
   }
