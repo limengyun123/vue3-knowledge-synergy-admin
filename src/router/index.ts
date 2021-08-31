@@ -71,6 +71,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/drop.vue"),
       },
+      {
+        path: "scrollto",
+        name: "ScrollTo",
+        component: () =>
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/scroll-to.vue"),
+      },
     ],
   },
   {
