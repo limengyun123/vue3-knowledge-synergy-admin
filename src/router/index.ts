@@ -92,6 +92,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/modify-layout.vue"),
       },
+      {
+        path: "pagination",
+        name: "Pagination",
+        component: () =>
+          import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/pagination.vue"),
+      },
     ]
   },
   {
@@ -124,9 +130,15 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "setup",
-        name: "setup",
+        name: "Setup",
         component: () =>
           import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/script-setup.vue"),
+      },
+      {
+        path: "property",
+        name: "Property",
+        component: () =>
+          import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/property-choose.vue"),
       },
     ]
   }
