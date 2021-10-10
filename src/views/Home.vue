@@ -14,16 +14,19 @@
       <router-link to="/demo-infinite-scroll/scrollto">scrollTo</router-link>
     </p>
     <p>
-      <router-link to='/demo-antv/layout'>layout布局</router-link> | 
-      <router-link to='/demo-antv/pagination'>pagination</router-link>
+      <router-link to='/demo-antv/layout'>layout布局</router-link>
     </p>
     <p>
       <router-link to='/demo-ant-design/dropdown'>dropdown</router-link> | 
-      <router-link to='/demo-ant-design/ref'>ref</router-link>
+      <router-link to='/demo-ant-design/ref'>ref</router-link> | 
+      <router-link to='/demo-ant-design/checkbox'>checkbox</router-link> | 
+      <router-link to='/demo-ant-design/pagination'>pagination</router-link>
     </p>
     <p>
       <router-link to='/demo-vue3/setup'>setup</router-link> | 
-      <router-link to='/demo-vue3/property'>property</router-link>
+      <router-link to='/demo-vue3/property'>property</router-link> | 
+      <router-link to='/demo-vue3/asyncawait'>async-await</router-link> | 
+      <router-link to='/demo-vue3/repeatclick'>repeat-click</router-link>
     </p>
   </div>
 </template>

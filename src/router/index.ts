@@ -91,13 +91,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Layout",
         component: () =>
           import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/modify-layout.vue"),
-      },
-      {
-        path: "pagination",
-        name: "Pagination",
-        component: () =>
-          import(/* webpackChunkName: "demo-antv" */ "../views/demo-antv/pagination.vue"),
-      },
+      }
     ]
   },
   {
@@ -119,6 +113,18 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-ant-design/variable-ref.vue"),
       },
+      {
+        path: "checkbox",
+        name: "Checkbox",
+        component: () =>
+          import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-ant-design/checkbox.vue"),
+      },
+      {
+        path: "pagination",
+        name: "Pagination",
+        component: () =>
+          import(/* webpackChunkName: "demo-ant-design" */ "../views/demo-ant-design/pagination.vue"),
+      }
     ]
   },
   {
@@ -139,6 +145,18 @@ const routes: Array<RouteRecordRaw> = [
         name: "Property",
         component: () =>
           import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/property-choose.vue"),
+      },
+      {
+        path: "asyncawait",
+        name: "AsyncAwait",
+        component: () =>
+          import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/async-await.vue"),
+      },
+      {
+        path: "repeatclick",
+        name: "RepeatClick",
+        component: () =>
+          import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/repeat-click.vue"),
       },
     ]
   }

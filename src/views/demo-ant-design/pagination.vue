@@ -7,7 +7,7 @@
     :total="500"
     :show-total="total => `共有${total}条`"
     @change="getBestNameTaskList"
-    @showSizeChange="getBestNameTaskList"
+    @showSizeChange="(a,b)=>getBestNameTaskList(a,b)"
     
   />
 </template>
