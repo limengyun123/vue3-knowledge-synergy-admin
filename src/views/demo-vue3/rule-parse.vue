@@ -1,5 +1,27 @@
 <template>
   <h3>HelloWorld</h3>
+  <div v-html="ruleStatementJoined"></div>
+    <!-- <span>
+      <span v-for="item in ruleStatementParsed.condition" :key="item">
+        <span v-if="item.type=='table'">
+          <span :class="`'table-'${item.stateItems[0].tableBelonging}`">item.stateItems[0].statement</span>
+        </span>
+        <span v-else-if="item.type=='fieldExp'">
+          <span :class="`'table-'${item.stateItems[0].tableBelonging}`">item.stateItems[0].statement</span>
+          =
+          <span :class="`'table-'${item.stateItems[1].tableBelonging}`">item.stateItems[1].statement</span>
+        </span>
+        <span v-else>
+
+        </span>
+        ^
+      </span>
+    </span>
+    ->
+    <span>
+
+    </span> -->
+  <div></div>
 </template>
 
 <script lang="ts">
@@ -8,11 +30,16 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     const rule = "tablea(t0)^tablea(t1) ^ t0.name='zhangsan' ^ t0.class=t1.class -> t0.age=t1.age";
+    const ruleStatementParsed = parseRuleStatement(rule);
     // const rule = "tablea(t0)^tableb(t2) ^ similar(Jaro-Winkler, tp.addr, t2.addr, 0.75) -> t0.phone=t2.phone";
-    console.log(parseRuleStatement(rule));
+    console.log(ruleStatementParsed);
     console.log(fieldToTable);
-    
-    return {}
+
+    const ruleStatementJoined = joinRuleStatement(ruleStatementParsed||{} as RuleStatement);
+
+    return {
+      ruleStatementJoined
+    }
   },
 })
 
@@ -142,6 +169,10 @@ function assignTableToFiled(RuleExpresParsed: RuleExpression[]): void{
       atom.tableBelonging = fieldToTable.get(exprItems[0]);
     })
   })
+}
+
+function joinRuleStatement(ruleStatementParsed: RuleStatement): string{
+  return "<h1>world!</h1>"
 }
 
 </script>
