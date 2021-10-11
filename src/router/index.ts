@@ -158,6 +158,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/repeat-click.vue"),
       },
+      {
+        path: "ruleparse",
+        name: "RuleParse",
+        component: () =>
+          import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/rule-parse.vue"),
+      },
     ]
   }
 ];
