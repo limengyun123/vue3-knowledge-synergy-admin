@@ -1,44 +1,36 @@
 <template>
-  <h3>HelloWorld</h3>
-  <div v-html="ruleStatementJoined"></div>
-    <!-- <span>
-      <span v-for="item in ruleStatementParsed.condition" :key="item">
-        <span v-if="item.type=='table'">
-          <span :class="`'table-'${item.stateItems[0].tableBelonging}`">item.stateItems[0].statement</span>
-        </span>
-        <span v-else-if="item.type=='fieldExp'">
-          <span :class="`'table-'${item.stateItems[0].tableBelonging}`">item.stateItems[0].statement</span>
-          =
-          <span :class="`'table-'${item.stateItems[1].tableBelonging}`">item.stateItems[1].statement</span>
-        </span>
-        <span v-else>
-
-        </span>
-        ^
-      </span>
-    </span>
-    ->
-    <span>
-
-    </span> -->
-  <div></div>
+  <div v-for="rule in rules" :key="rule">
+    <h3>{{rule}}</h3>
+    <h3>添加样式后：</h3><h3 v-html="getRuleHTML(rule)"></h3>
+    <div style="width: 60%; height: 2px; background-color: #cccccc; margin: 10px 20%;"></div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   setup() {
-    const rule = "tablea(t0)^tablea(t1) ^ t0.name='zhangsan' ^ t0.class=t1.class -> t0.age=t1.age";
-    const ruleStatementParsed = parseRuleStatement(rule);
-    // const rule = "tablea(t0)^tableb(t2) ^ similar(Jaro-Winkler, tp.addr, t2.addr, 0.75) -> t0.phone=t2.phone";
-    console.log(ruleStatementParsed);
-    console.log(fieldToTable);
+    const rules = [
+      "tablea(t0) ^ t0.id='12345'->t0.name='zhangshan'",
+      "tablea(t0)^tablea(t1) ^ t0.name='zhangsan' ^ t0.class=t1.class -> t0.age=t1.age",
+      "tablea(t0)^tablea(t1) ^  t0.class=t1.class -> t0.age=t1.age",
+      "tablea(t0)^tablea(t1) ^tableb(t2)^tableb(t3)^ t0.name=t2.name ^ t1.name=t2.name -> t0.id=t2.id",
+      "tablea(t0)^tableb(t2) ^ similar(Jaro-Winkler, t0.addr, t2.addr, 0.75) -> t0.phone=t2.phone",
+      "tablea(t0)^tableb(t2) ^ ML('modleID', t0.addr, t2.addr) -> t0.phone=t2.phone",
+      "accuracy1 (t0) ^ tableb (t1) ^ latest(t0.status,t1.status) -> latest(t0.job,t1.job)"
+    ];
+    
+    const getRuleHTML = (rule: string): string=>{
+      const ruleStatementParsed = parseRuleStatement(rule);
+      console.log(ruleStatementParsed);
+      return joinRuleStatement(ruleStatementParsed||{} as RuleStatement);
+    }
 
-    const ruleStatementJoined = joinRuleStatement(ruleStatementParsed||{} as RuleStatement);
-
+    
     return {
-      ruleStatementJoined
+      rules,
+      getRuleHTML
     }
   },
 })
@@ -52,7 +44,7 @@ type RuleAtom = {
 }
 
 type RuleExpression = {
-  type: 'similar'|'ml'|'table'|'fieldExp'
+  type: 'similar'|'ML'|'latest'|'table'|'fieldExp'
   stateItems: RuleAtom[]
 }
 
@@ -97,7 +89,7 @@ function parseRuleExpression(ruleExpre: string): RuleExpression[]{
     if(splitSign.equal.test(item))
       parseType = 'fieldExp';
     else if(splitSign.comma.test(item))
-      parseType = /similar/.test(item)?'similar':'ml';
+      parseType = /similar/.test(item)?'similar':(/latest/.test(item)?'latest':'ML');
     
     ruleExpresParsed.push(parseRuleAtom(item.trim(), parseType));  
   });
@@ -109,7 +101,7 @@ function parseRuleExpression(ruleExpre: string): RuleExpression[]{
 
 function parseRuleAtom(statemt: string, type: string): RuleExpression{
   const ruleAtomParsed:RuleExpression = {
-    type: type as "fieldExp" | "similar" | "ml" | "table",
+    type: type as "fieldExp" | "similar" | "ML" | "latest" | "table",
     stateItems: []
   };
 
@@ -119,13 +111,24 @@ function parseRuleAtom(statemt: string, type: string): RuleExpression{
 
   switch(type){
     case 'similar':
-    case 'ml': {
+    case 'ML': {
       let algorithmParams = statemt.split('(')[1];
       const algorithmParamsTypes: RuleAtomType[] = ['algorithm', 'field', 'field', 'algorithm'];
       algorithmParams.substring(0, algorithmParams.length-1);
       algorithmParams.split(',').forEach((item, index)=>{
         pushIntoRuleAtomParsed({
           type: algorithmParamsTypes[index],
+          statement: item.trim()
+        });
+      })
+      break;
+    }
+    case 'latest': {
+      let algorithmParams = statemt.split('(')[1];
+      algorithmParams.substring(0, algorithmParams.length-1);
+      algorithmParams.split(',').forEach((item)=>{
+        pushIntoRuleAtomParsed({
+          type: 'field',
           statement: item.trim()
         });
       })
@@ -143,10 +146,12 @@ function parseRuleAtom(statemt: string, type: string): RuleExpression{
       break;
     default: {
       const exprItems = statemt.split('(');
-      fieldToTable.set(exprItems[1].substring(0, exprItems[1].length-1), exprItems[0]);
+      const tableName = exprItems[0].trim();
+      const fieldName = exprItems[1].substring(0, exprItems[1].length-1).trim();
+      fieldToTable.set(fieldName, tableName);
       pushIntoRuleAtomParsed({
           type: 'field',
-          statement: statemt
+          statement: `${tableName}(${fieldName})`
         });
       break;  
     }
@@ -161,18 +166,70 @@ function assignTableToFiled(RuleExpresParsed: RuleExpression[]): void{
       if(atom.type!='field') return;
       if(splitSign.bracket.test(atom.statement)){
         const exprItems = atom.statement.split('(');
-        atom.tableBelonging = fieldToTable.get(exprItems[1].substring(0, exprItems[1].length-1));
+        atom.tableBelonging = fieldToTable.get(exprItems[1].substring(0, exprItems[1].length-1).trim());
         return;
       }
       
       const exprItems = atom.statement.split('.');
-      atom.tableBelonging = fieldToTable.get(exprItems[0]);
+      atom.tableBelonging = fieldToTable.get(exprItems[0].trim());
     })
   })
 }
 
 function joinRuleStatement(ruleStatementParsed: RuleStatement): string{
-  return "<h1>world!</h1>"
+  return `${joinRuleExpression(ruleStatementParsed.condition)} -> ${joinRuleExpression(ruleStatementParsed.result)}`;
+}
+
+function joinRuleExpression(ruleExpresParsed: RuleExpression[]): string{
+
+  return ruleExpresParsed.map((item)=>{
+    return joinRuleItem(item);
+  }).join(' ^ ');
+}
+
+function joinRuleItem(ruleItemParsed: RuleExpression): string{
+  let ruleResult = '';
+  switch(ruleItemParsed.type){
+    case 'similar':
+    case 'ML':
+    case 'latest':
+      ruleResult = `${ruleItemParsed.type}(${
+        ruleItemParsed.stateItems.map((item)=>{
+          return joinRuleAtom(item);
+        }).join(', ')
+      })`;
+      break;
+    case 'table':
+      ruleResult = joinRuleAtom(ruleItemParsed.stateItems[0]);
+      break;
+    default:
+      ruleResult = `${
+        ruleItemParsed.stateItems.map((item)=>{
+          return joinRuleAtom(item);
+        }).join(' = ')
+      }`;
+      break;
+  }
+
+  return ruleResult;
+}
+
+function joinRuleAtom(ruleAtomParsed: RuleAtom): string{
+  let color = '#333333';
+
+  switch(ruleAtomParsed.type){
+    case 'constant':
+      color = '#00BFD0';
+      break;
+    case 'algorithm':
+      color = '#00B578';
+      break;
+    default:
+      if(ruleAtomParsed.tableBelonging=='tableb') color='#5260FF';
+      break;
+  }
+
+  return `<span style="color: ${color}">${ruleAtomParsed.statement}</span>`;
 }
 
 </script>
