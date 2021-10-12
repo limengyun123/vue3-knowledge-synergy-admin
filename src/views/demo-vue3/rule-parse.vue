@@ -35,7 +35,8 @@ export default defineComponent({
   },
 })
 
-type RuleAtomType = 'constant'|'algorithm'|'field';
+type RuleAtomType = 'constant'|'algorithm'|'field'
+type RuleExpressionType = 'similar'|'ML'|'latest'|'table'|'fieldExp'
 
 type RuleAtom = {
   type: RuleAtomType
@@ -44,7 +45,7 @@ type RuleAtom = {
 }
 
 type RuleExpression = {
-  type: 'similar'|'ML'|'latest'|'table'|'fieldExp'
+  type: RuleExpressionType
   stateItems: RuleAtom[]
 }
 
@@ -101,7 +102,7 @@ function parseRuleExpression(ruleExpre: string): RuleExpression[]{
 
 function parseRuleAtom(statemt: string, type: string): RuleExpression{
   const ruleAtomParsed:RuleExpression = {
-    type: type as "fieldExp" | "similar" | "ML" | "latest" | "table",
+    type: type as RuleExpressionType,
     stateItems: []
   };
 

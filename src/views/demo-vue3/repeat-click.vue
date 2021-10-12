@@ -22,9 +22,13 @@ export default defineComponent({
         };
 
         on(el, 'mousedown', (e: MouseEvent): void => {
+          // console.log(e);
           if ((e as any).button !== 0) return;
           const currentTime = Date.now();
-          if (currentTime - startTime < 500) return;
+          if (currentTime - startTime < 500){
+            startTime = currentTime;
+            return;
+          }
           startTime = currentTime;
           once(document as any, 'mouseup', clear);
           // interval && clearInterval(interval);
