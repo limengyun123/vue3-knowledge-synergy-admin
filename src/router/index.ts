@@ -164,6 +164,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/rule-parse.vue"),
       },
+      {
+        path: "rulejoin",
+        name: "RuleJoin",
+        component: () =>
+          import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/rule-join.vue"),
+      },
     ]
   }
 ];

@@ -25,9 +25,10 @@
     <p>
       <router-link to='/demo-vue3/setup'>setup</router-link> | 
       <router-link to='/demo-vue3/property'>property</router-link> | 
-      <router-link to='/demo-vue3/asyncawait'>async-await</router-link> | 
-      <router-link to='/demo-vue3/repeatclick'>repeat-click</router-link> | 
-      <router-link to='/demo-vue3/ruleparse'>rule-parse</router-link>
+      <router-link to='/demo-vue3/asyncawait'>asyncAwait</router-link> | 
+      <router-link to='/demo-vue3/repeatclick'>repeatClick</router-link> | 
+      <router-link to='/demo-vue3/ruleparse'>ruleParse</router-link> | 
+      <router-link to='/demo-vue3/rulejoin'>ruleJoin</router-link>
     </p>
   </div>
 </template>

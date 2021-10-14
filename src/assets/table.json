@@ -1,0 +1,28 @@
+{
+  "table0": [
+    "contrib_institution_display", 
+    "contrib_country_bg", 
+    "contrib_state_bg", 
+    "contrib_addr_line", 
+    "contrib_postal_code", 
+    "uuid"
+  ],
+  "table1": [
+    "name", 
+    "status", 
+    "job", 
+    "kids", 
+    "city", 
+    "ac",
+    "zip", 
+    "country"
+  ],
+  "table2": [
+    "first_name", 
+    "last_name", 
+    "affiliation", 
+    "city", 
+    "country", 
+    "title"
+  ]
+}
