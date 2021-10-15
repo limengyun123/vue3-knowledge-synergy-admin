@@ -10,6 +10,7 @@
       <router-link to="/demo-infinite-scroll/parentcompo">parentCompo</router-link> | 
       <router-link to="/demo-infinite-scroll/selectall">parentSelectAll</router-link> | 
       <router-link to="/demo-infinite-scroll/massmemory">parentMassMemory</router-link> | 
+      <router-link to="/demo-infinite-scroll/filter">filter</router-link> | 
       <router-link to="/demo-infinite-scroll/drag">drag</router-link> | 
       <router-link to="/demo-infinite-scroll/scrollto">scrollTo</router-link>
     </p>

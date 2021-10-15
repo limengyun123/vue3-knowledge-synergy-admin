@@ -1,5 +1,11 @@
 <template>
   <h3>Hello, world!</h3>
+  <div>
+    <div>选择表格范围</div>
+    <div>
+      <a-tag closable @close="log">Prevent Default</a-tag>
+      </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,8 +29,11 @@ export default defineComponent({
     console.log(tableNames);
 
     const condition = ref([]), result = ref([]);
+    const log = ()=>{console.log(Date.now())}
     return {
-
+      condition,
+      result,
+      log
     }
   },
 })

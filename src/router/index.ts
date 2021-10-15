@@ -66,6 +66,12 @@ const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/parent-mass-memory.vue"),
       },
       {
+        path: "filter",
+        name: "Filter",
+        component: () =>
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/filter.vue"),
+      },
+      {
         path: "drag",
         name: "Drag",
         component: () =>
