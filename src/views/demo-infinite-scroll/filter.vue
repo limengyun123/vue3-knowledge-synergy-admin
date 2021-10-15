@@ -4,11 +4,10 @@
     <template #overlay> -->
       <div style="padding: 8px; width: 390px; background-color: #ffffff; border-radius: 4px; box-shadow: 0 2px 8px #cccccc; ">
         <a-row style="padding: 9px" type="flex" justify="space-between">
-          <!-- <a-checkbox
-            v-model:checked="dropdownCheckAll"
-            :indeterminate="dropdownIndeterminate"
-          > -->
-          <a-checkbox>
+          <a-checkbox
+            v-model:checked="selectResult.selectAll"
+          >
+            <!-- :indeterminate="dropdownIndeterminate" -->
             全选
           </a-checkbox>
           <span>
@@ -17,26 +16,24 @@
             <span style="margin-left: 16px"><RestOutlined />清空条件</span>
           </span>
         </a-row>
-        <a-row>
-            <a-row :gutter="8">
-              <a-col :span="11">
-                <a-input-search placeholder="请输入搜索内容" />
-              </a-col>
-              <a-col :span="6">
-                <a-input placeholder="区间设置" />
-              </a-col>
-              <a-col :span="1">
-                <SwapRightOutlined style="line-height: 32px"/>
-              </a-col>
-              <a-col :span="6">
-                <a-input placeholder="区间设置" />
-              </a-col>
-            </a-row>
+        <a-row :gutter="8">
+          <a-col :span="11">
+            <a-input-search placeholder="请输入搜索内容" />
+          </a-col>
+          <a-col :span="6">
+            <a-input placeholder="区间设置" />
+          </a-col>
+          <a-col :span="1">
+            <SwapRightOutlined style="line-height: 32px"/>
+          </a-col>
+          <a-col :span="6">
+            <a-input placeholder="区间设置" />
+          </a-col>
         </a-row>
         <a-row style="height: 250px; overflow-y: scroll">
           <div ref="targetDom" @click.capture="handleClick" :onscroll="handleScroll">
             <div ref="targetTopDom" class="top-helper"></div>
-            <a-checkbox-group style="background-color: lightgreen">
+            <a-checkbox-group v-model:value="selectResult.selectedValues" style="background-color: lightgreen">
               <div v-for="value in checkboxFixedValues" :key="value">
                 <a-checkbox :value="value" style="height: 30px;">{{value}}</a-checkbox>
               </div>
@@ -55,19 +52,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import {
+  FilterOutlined,
   RestOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
   SwapRightOutlined
 } from "@ant-design/icons-vue";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const testData = require('../../assets/test.json');
+import testData from "@/assets/test.json";
 
 export default defineComponent({
   components: {
+    FilterOutlined,
     RestOutlined,
     SortAscendingOutlined,
     SortDescendingOutlined,
@@ -77,12 +74,27 @@ export default defineComponent({
     const dropdownIconInactive = true;
     const loading = ref(false);
     const checkboxFixedValues = ref(testData);
-    const handleClick = ()=>{console.log('click')};
-    const handleScroll = ()=>{console.log('scroll')};
+    const searchConditions = {
+      ascend: true,
+      searchContent: '',
+      intervalFrom: '',
+      intervalTo: ''
+    };
+
+    const selectResult = reactive({
+      selectAll: false,
+      selectedValues: []
+    });
+
+
+    const handleClick = ()=>{};
+    const handleScroll = ()=>{};
     return {
       dropdownIconInactive,
       loading,
       checkboxFixedValues,
+      searchConditions,
+      selectResult,
       handleClick,
       handleScroll
     }
@@ -90,7 +102,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="less">
 .dropdown-icon-inactive{
   color: #aaaaaa;
 }
