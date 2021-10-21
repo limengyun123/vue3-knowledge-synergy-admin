@@ -69,7 +69,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "filter",
         name: "Filter",
         component: () =>
-          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/filter.vue"),
+          import(/* webpackChunkName: "demo-infinite-scroll" */ "../views/demo-infinite-scroll/filter-parent.vue"),
       },
       {
         path: "drag",
