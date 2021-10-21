@@ -46,7 +46,7 @@ type RuleAtom = {
 
 type RuleExpression = {
   type: RuleExpressionType
-  stateItems: RuleAtom[]
+  expItems: RuleAtom[]
 }
 
 type RuleStatement = {
@@ -103,11 +103,11 @@ function parseRuleExpression(ruleExpre: string): RuleExpression[]{
 function parseRuleAtom(statemt: string, type: string): RuleExpression{
   const ruleAtomParsed:RuleExpression = {
     type: type as RuleExpressionType,
-    stateItems: []
+    expItems: []
   };
 
   const pushIntoRuleAtomParsed = (param: RuleAtom)=>{
-    ruleAtomParsed.stateItems.push(param);
+    ruleAtomParsed.expItems.push(param);
   };
 
   switch(type){
@@ -163,7 +163,7 @@ function parseRuleAtom(statemt: string, type: string): RuleExpression{
 
 function assignTableToFiled(RuleExpresParsed: RuleExpression[]): void{
   RuleExpresParsed.forEach((item)=>{
-    item.stateItems.forEach((atom)=>{
+    item.expItems.forEach((atom)=>{
       if(atom.type!='field') return;
       if(splitSign.bracket.test(atom.statement)){
         const exprItems = atom.statement.split('(');
@@ -195,17 +195,17 @@ function joinRuleItem(ruleItemParsed: RuleExpression): string{
     case 'ML':
     case 'latest':
       ruleResult = `${ruleItemParsed.type}(${
-        ruleItemParsed.stateItems.map((item)=>{
+        ruleItemParsed.expItems.map((item)=>{
           return joinRuleAtom(item);
         }).join(', ')
       })`;
       break;
     case 'table':
-      ruleResult = joinRuleAtom(ruleItemParsed.stateItems[0]);
+      ruleResult = joinRuleAtom(ruleItemParsed.expItems[0]);
       break;
     default:
       ruleResult = `${
-        ruleItemParsed.stateItems.map((item)=>{
+        ruleItemParsed.expItems.map((item)=>{
           return joinRuleAtom(item);
         }).join(' = ')
       }`;

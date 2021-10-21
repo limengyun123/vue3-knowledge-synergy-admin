@@ -319,7 +319,7 @@ function useScroll(properties: any, emit: (event: "submitValues", ...args: any[]
   const checkboxFixedValues: Ref<CheckboxItemsType> = ref([]);          // 已渲染的checkbox项 
   const checkboxSelectedValues: Ref<CheckboxItemsType> = ref([]);       // 已渲染的checkbox项中的已选项，即框被勾上的项
   let checkboxTrueValues: CheckboxItemsType = [];                       // 真正的已选项，配合checkall使用用于处理大数据量情况下的多选
-  let cache: CheckboxItemsType = [];let requestedDataType = ''; // 已经请求的列表数据缓存
+  let cache: CheckboxItemsType = [];let requestedDataType = '';         // 已经请求的列表数据缓存及类型
 
   // 列表请求的过滤条件
   let searchConditions = {} as SearchConditionsType;

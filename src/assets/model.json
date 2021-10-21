@@ -1,0 +1,74 @@
+[
+  {
+    "id": "00001",
+    "name": "cosine",
+    "type": "MD",
+    "threshold": 0.85,
+    "tag": "相似度Cosine模型",
+    "description": "对比字符相似程度的算法,适用于英文字符较多及描述性文字情况",
+    "version": 1,
+    "path": "",
+    "warehouse": "",
+    "status": 0
+  },
+  {
+    "id": "00002",
+    "name": "jaccard",
+    "type": "MD",
+    "threshold": 0.85,
+    "tag": "相似度Jaccard模型",
+    "description": "对比字符相似程度的算法,适用于判断文字相关性情况,较少考虑字符排序",
+    "version": 1,
+    "path": "",
+    "warehouse": "",
+    "status": 0
+  },
+  {
+    "id": "00003",
+    "name": "jaro-winkler",
+    "type": "MD",
+    "threshold": 0.85,
+    "tag": "相似度Jaro模型",
+    "description": "对比字符相似程度的算法,适用字符相同字符占比判断",
+    "version": 1,
+    "path": "",
+    "warehouse": "",
+    "status": 0
+  },
+  {
+    "id": "00004",
+    "name": "levenshtein",
+    "type": "MD",
+    "threshold": 0.85,
+    "tag": "相似度Levenshtein模型",
+    "description": "对比字符相似程度的算法,同位置字符相同数多相似度越高",
+    "version": 1,
+    "path": "",
+    "warehouse": "",
+    "status": 0
+  },
+  {
+    "id": "00011",
+    "name": "ditto-multi-cas",
+    "type": "ML",
+    "threshold": 0,
+    "tag": "机构是否相似的Ditto模型",
+    "description": "机构是否相似的Ditto模型",
+    "version": 1,
+    "path": "",
+    "warehouse": "",
+    "status": 0
+  },
+  {
+    "id": "00013",
+    "name": "Sentence-Bert",
+    "type": "ML",
+    "threshold": 0,
+    "tag": "机构是否相似的Sentence Bert模型",
+    "description": "机构是否相似的Sentence Bert模型",
+    "version": 1,
+    "path": "",
+    "warehouse": "",
+    "status": 0
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "conditions": [
+    {
+      "type": "similar",
+      "expItems": [
+        { "type": "field", "statement": "table0.contrib_state_bg", "tableBelonging": "table0"},
+        { "type": "relative", "statement": "similar", "statementZH": "相似于"},
+        { "type": "field", "statement": "table1.city", "tableBelonging": "table1"},
+        { "type": "constant", "statement": "levenshtein"},
+        { "type": "constant", "statement": "0.85"}
+      ]
+    },
+    {
+      "type": "ml",
+      "expItems": [
+        { "type": "field", "statement": "table0.contrib_country_bg", "tableBelonging": "table0"},
+        { "type": "relative", "statement": "similar", "statementZH": "相似于"},
+        { "type": "field", "statement": "table2.first_name", "tableBelonging": "table2"},
+        { "type": "constant", "statement": "Sentence-Bert"}
+      ]
+    },
+    {
+      "type": "fieldExp",
+      "expItems": [
+        { "type": "field", "statement": "table1.country", "tableBelonging": "table1"},
+        { "type": "relative", "statement": "!=", "statementZH": "不等于"},
+        { "type": "field", "statement": "table2.country", "tableBelonging": "table2"}
+      ]
+    }
+  ],
+  "results": [
+    {
+      "type": "similar",
+      "expItems": [
+        { "type": "field", "statement": "table1.zip", "tableBelonging": "table1"},
+        { "type": "relative", "statement": "similar", "statementZH": "相似于"},
+        { "type": "field", "statement": "table0.contrib_country_bg", "tableBelonging": "table1"},
+        { "type": "constant", "statement": "Jaro-Winkler"},
+        { "type": "constant", "statement": "0.95"}
+      ]
+    }
+  ]
+}
