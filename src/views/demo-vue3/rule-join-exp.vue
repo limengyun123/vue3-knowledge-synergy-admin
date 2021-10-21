@@ -65,7 +65,14 @@ const models = [
   {name: "levenshtein", type: "MD"},
   {name: "ditto-multi-cas", type: "ML"},
   {name: "Sentence-Bert", type: "ML"}
-]
+];
+
+const modelOptions = models.map((item)=>{
+  return {
+    label: item.name,
+    value: item.name
+  }
+});
 
 export default defineComponent({
   props:{
@@ -87,13 +94,6 @@ export default defineComponent({
       relative: '',
       model: '',
       threshold: undefined,
-    });
-
-    const modelOptions = models.map((item)=>{
-      return {
-        label: item.name,
-        value: item.name
-      }
     });
 
 
