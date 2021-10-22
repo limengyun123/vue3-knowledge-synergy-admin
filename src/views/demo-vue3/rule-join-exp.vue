@@ -7,35 +7,47 @@
     <a-space>
       <a-cascader :options="tablesAndFieldsOptions" @change="onField1Change" :displayRender="transformSymbol" />
       <a-select v-model:value="expModel.relative" style="width: 120px" :options="relativeOptions" @change="onRelativeChange" />
-      <a-input v-if="expContainsConstant" v-model:value="value"/>
+      <a-input v-if="expContainsConstant" v-model:value="expModel.field2"/>
       <a-space v-else>
         <a-cascader :options="tablesAndFieldsOptions" @change="onField2Change" :displayRender="transformSymbol"/>
         <a-select v-if="showModelSelect" v-model:value="expModel.model" style="width: 120px" :options="modelOptions" @change="onModelChange" />
         <a-input-number v-if="showThresholdInput" v-model:value="expModel.threshold"/>
       </a-space>
+      <a-button shape="circle" size="small" @click="deleteExpression">
+        <template #icon><MinusOutlined /></template>
+      </a-button>
     </a-space>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, reactive, Ref, ref } from 'vue';
-interface Option {
+import { MinusOutlined } from "@ant-design/icons-vue";
+
+type fieldOption = {
   value: string;
   label: string;
-  children?: Option[];
+  children?: fieldOption[];
 }
-type ruleExpressionType = 'similar'|'fieldExp'|'ml';
-type ruleExpression = {
-  type: ruleExpressionType
+type RuleExpressionType = 'similar'|'fieldExp'|'ml';
+type RuleExpression = {
+  type: RuleExpressionType
   field1: string
   field2: string | number
   relative: string
   model?: string
   threshold?: number 
 }
-
+export type ChildOperation = {
+  generateRule: ()=>void
+}
+export type ruleStatWords = {
+  exp: string
+  word: string
+}
+/********************************** 模拟数据定义 /**********************************/
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tablesAndFields = require('../../assets/table.json');
-const tablesAndFieldsOptions = Object.keys(tablesAndFields).map((key)=>{
+const tablesAndFieldsOptions: fieldOption[] = Object.keys(tablesAndFields).map((key)=>{
   return {
     value: key,
     label: key,
@@ -48,15 +60,13 @@ const tablesAndFieldsOptions = Object.keys(tablesAndFields).map((key)=>{
   }
 });
 
-
-const relativeOptions = [
+const relativeOptions: fieldOption[] = [
   { value: 'similar', label: '相似于' },
   { value: '=', label: '等于' },
   { value: '>', label: '大于' },
   { value: '<', label: '小于' },
   { value: '!=', label: '不等于' },
 ];
-
 
 const models = [
   {name: "cosine", type: "MD"},
@@ -75,20 +85,29 @@ const modelOptions = models.map((item)=>{
 });
 
 export default defineComponent({
+  components:{
+    MinusOutlined
+  },
+  emits: ['deleteRuleExp'],
   props:{
+    expId:{
+      type: String,
+      require: true
+    },
     returnOperate:{
       type: Function,
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      default: ()=>{}
+      default: ()=>{return }
     }
   },
-  setup(props) {
+  setup(props, {emit}) {
+    // 控制不同表达式类型下不同输入框的呈现
     const expContainsConstant: Ref<boolean> = ref(false);
     const showModelSelect: Ref<boolean> = ref(false);
     const showThresholdInput: Ref<boolean> = ref(false);
 
-    const expModel: ruleExpression = reactive({
-      type: 'fieldExp' as ruleExpressionType,
+    // 输入值的绑定量
+    const expModel: RuleExpression = reactive({
+      type: 'fieldExp' as RuleExpressionType,
       field1: '',
       field2: '',
       relative: '',
@@ -97,10 +116,15 @@ export default defineComponent({
     });
 
 
+    
+    // 父组件调用子组件方法的桥梁
+    const returnedParams: any = {generateRule};
+
+    // 将Cascader中内容连接符由 ‘/’ 改为 ‘.’
     const transformSymbol = (param: {labels: string[]})=>{return param.labels.join('.')}
 
-    const onField1Change = (value: string[], selectedOptions: Option[]) => {
-      console.log(value, selectedOptions)
+    // 下列四个onXXXchange方法响应各输入框的变化事件
+    const onField1Change = (value: string[]) => {
       expModel.field1 = value.join('.');
     };
 
@@ -116,8 +140,7 @@ export default defineComponent({
       
     }
 
-    const onField2Change = (value: string[], selectedOptions: Option[]) => {
-      console.log(value, selectedOptions)
+    const onField2Change = (value: string[]) => {
       expModel.field2 = value.join('.');
     };
 
@@ -139,7 +162,14 @@ export default defineComponent({
       }
     }
 
-    const generateRule: any = ()=>{
+
+    const deleteExpression = ()=>{
+      console.log(props.expId);
+      emit('deleteRuleExp', props.expId);
+    }
+
+    // 表达式生成规则，在组件内部根据表达式的类型生成，并将结果返回给父组件
+    function generateRule(): ruleStatWords{
       const getLabelByValue = (value: string)=>{
         for(let item of relativeOptions){
           if(item.value===value) return item.label;
@@ -155,7 +185,7 @@ export default defineComponent({
           }
         case 'ml':
           return {
-            exp: `similar(${expModel.model}, ${expModel.field1}, ${expModel.field2})`,
+            exp: `ml(${expModel.model}, ${expModel.field1}, ${expModel.field2})`,
             word: `${expModel.model}算法判断${expModel.field1}相似于${expModel.field2}`
           }
         default:
@@ -166,18 +196,18 @@ export default defineComponent({
       }
     }
 
-    const returnedParams: any = {generateRule};
-
+    // 组件挂载时将 供父组件调用的方法的引用 返回给父组件
     onMounted(()=>{
-      props.returnOperate(returnedParams)
+      props.returnOperate(returnedParams);
+      console.log('mount');
     });
 
+    // 组件解挂时将 供父组件调用的方法的引用置空
     onUnmounted(()=>{
       returnedParams.generateRule = null;
-      console.log('destroy')
+      console.log('destroy');
     })
 
-     
 
     return {
       expContainsConstant,
@@ -194,7 +224,9 @@ export default defineComponent({
       onRelativeChange,
       onField2Change,
       onModelChange,
+      deleteExpression
     };
   },
 });
+
 </script>
