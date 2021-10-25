@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
+import Admin from "@/views/auth/admin-compo.vue";
+import NonAdmin from "@/views/auth/non-admin-compo.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -177,12 +179,45 @@ const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "demo-vue3" */ "../views/demo-vue3/rule-join.vue"),
       },
     ]
-  }
+  },
+  {
+    path: "/auth",
+    name: "Auth",
+    component: () => import(/* webpackChunkName: "auth" */ "../views/auth/index.vue"),
+    children: [
+      {
+        path: "router",
+        name: "Router",
+        meta: { splitByAuth: true },  // 与常用的requireAuth参数的含义不同
+        component: () => import(/* webpackChunkName: "auth" */ "../views/auth/router.vue"),
+        children: [
+          {
+            path: ":",
+            component: NonAdmin
+          }
+        ]
+      },
+    ]
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+
+router.beforeEach((to, from, next) => {
+  console.log(to, from, next);
+  if(to.meta.splitByAuth){
+    const isAdmin = localStorage.getItem('admin');
+
+    if(isAdmin)to.matched[to.matched.length-1].components.default = Admin;
+    else to.matched[to.matched.length-1].components.default = NonAdmin;
+
+    next();
+  }
+  else next();
 });
 
 export default router;

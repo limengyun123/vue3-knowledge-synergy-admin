@@ -31,6 +31,9 @@
       <router-link to='/demo-vue3/ruleparse'>ruleParse</router-link> | 
       <router-link to='/demo-vue3/rulejoin'>ruleJoin</router-link>
     </p>
+    <p>
+      <router-link to='/auth'>auth</router-link> | 
+    </p>
   </div>
 </template>
 
