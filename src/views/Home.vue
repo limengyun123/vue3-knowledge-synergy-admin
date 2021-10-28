@@ -32,7 +32,10 @@
       <router-link to='/demo-vue3/rulejoin'>ruleJoin</router-link>
     </p>
     <p>
-      <router-link to='/auth'>auth</router-link> | 
+      <router-link to='/auth'>auth</router-link>
+    </p>
+    <p>
+      <router-link to='/origin/file'>file</router-link>
     </p>
   </div>
 </template>

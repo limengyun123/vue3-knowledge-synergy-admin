@@ -199,6 +199,18 @@ const routes: Array<RouteRecordRaw> = [
       },
     ]
   },
+  {
+    path: "/origin",
+    name: "Origin",
+    component: () => import(/* webpackChunkName: "origin" */ "../views/origin/index.vue"),
+    children: [
+      {
+        path: "file",
+        name: "File",
+        component: () => import(/* webpackChunkName: "origin" */ "../views/origin/file.vue")
+      },
+    ]
+  },
 ];
 
 const router = createRouter({
