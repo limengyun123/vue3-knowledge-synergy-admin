@@ -5,17 +5,14 @@
 
   <div>
     <select @change="handleEncodeChange($event.target.value)">
-      <option value ="UTF-8">UTF-8</option>
-      <option value ="Unicode">Unicode</option>
-      <option value="GBK">GBK</option>
-      <option value="GB2312">GB2312</option>
+      <option v-for="item in encodeType" :key="item" :value ="item">{{item}}</option>
     </select>
   </div>
   <div class="content-wrapper">{{fileContents}}</div>
 
   <div>
     <select @change="handleLFChange($event.target.value)">
-      <option v-for="(val, key) in lineFeedTypes" :key="key" :value ="val">{{key}}</option>
+      <option v-for="(val, key) in lineFeedType" :key="key" :value ="val">{{key}}</option>
     </select>
   </div>
   <div class="content-wrapper">
@@ -23,14 +20,44 @@
   </div>
 
   <div>
-    <select @change="handleSeparatorChange($event.target.value)">
+    <!-- <select @change="handleSeparatorChange($event.target.value)">
       <option v-for="(val, key) in lineSeparators" :key="key" :value ="val">{{key}}</option>
-    </select>
+    </select> -->
+    <div>
+      <span @click="handleSeparatorChange($event.target)">
+        <label v-for="(val, key) in lineSeparators" :key="key" style="margin: 20px;"><input type="radio" :value="val" :label="key" :checked="separatorSelected[key]"/>{{key}}</label> 
+      </span>
+      其他<input :value="otherSeparator" @input="handleSeparatorInput($event.target.value)" />
+    </div>
+    <div @click="handleMergeSeparators">
+      <label><input type="radio" :checked="needMergeSep"/>连续分隔符号视为单个处理</label> 
+    </div>
+  </div>
+  <div class="content-wrapper">
+    <table>
+      <tr v-for="line in splitBySep" :key="line">
+        <td v-for="item in line" :key="item" style="margin: 10px">{{item}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div>
     <select @change="handleTextWrapperChange($event.target.value)" style="margin: 0 40px;">
       <option v-for="(val, key) in textWrapperSign" :key="key" :value ="val">{{key}}</option>
     </select>
+  </div>
+  <div class="content-wrapper">
+    <table>
+      <tr v-for="line in splitByQuotes" :key="line">
+        <td v-for="item in line" :key="item" style="margin: 10px">{{item}}</td>
+      </tr>
+    </table>
+  </div>
+  <div>
     <span @click="handleColumnTypeChange($event.target)">
-      <label v-for="(val, key) in columnDataType" :key="key"><input name="Fruit" type="radio" :value="val" :checked="columnsType[selectedColumn]===val"/>{{key}}</label> 
+      <label v-for="(val, key) in columnDataType" :key="key">
+        <input type="radio" :value="val" :checked="columnsType[selectedColumn]===val"/>{{key}}
+      </label> 
     </span>
   </div>
   <div class="content-wrapper">
@@ -57,17 +84,20 @@ import { computed, defineComponent, Ref, ref, unref } from 'vue'
 
 type FileRead = string | ArrayBuffer | null;
 
-const lineFeedTypes = {
+const encodeType = ["UTF-8", "Unicode", "GBK", "GB2312"];
+
+const lineFeedType = {
   LF: '\n',
   CR: '\r',
   CRLF: '\r\n'
 }
 
-const lineSeparators = {
+const lineSeparators: {[key: string]: string} = {
   comma: ',',
   tab: '\t',
   semicolon: ';',
-  space: ' '
+  space: ' ',
+  other: ''
 }
 
 const textWrapperSign = {
@@ -83,6 +113,10 @@ const columnDataType = {
   "不导入此列": "忽略列"
 }
 
+
+const fileRead1 = `abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#
+abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#
+abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#abc,;#`;
 
 const fileRead = `"t1","sa1","张建国","上海市","200002","北京西路5号","54687452","03/06/1993","男","钢铁侠玩具"
 "t2","sa2","张建国","上海市","510045","北京路5号","54687452","03/06/1993","空","跑步鞋"
@@ -114,108 +148,216 @@ const fileRead = `"t1","sa1","张建国","上海市","200002","北京西路5号"
 export default defineComponent({
   setup() {
     
-    // const file = ref({} as Blob);
-    // const fileContents: Ref<FileRead> = ref('结果');
-    // const reader: FileReader = new FileReader();
-
-    // const handleFileChange = (target: HTMLInputElement)=>{
-    //   if(!target.files || target.files?.length==0) return ;
-    //   else file.value = target.files[0];
-    // }
-
-    // const handleEncodeChange = (encodeType: string)=>{
-    //   if(!unref(file).type) return;
-
-    //   reader.readAsText(file.value, encodeType);
-    //   reader.onload = function(){
-    //     fileContents.value = reader.result;
-    //   console.log(fileContents.value);
-    //   }
-    // }
-
-    const fileContents: Ref<string> = ref(fileRead);
-
-
-    // 换行符选择
-    const splitByCRLF: Ref<string[]> = ref([]);
-
-    const handleLFChange = (lineFeed: string)=>{
-      splitByCRLF.value = unref(fileContents).split(lineFeed);
-    }
-    handleLFChange(lineFeedTypes.LF);
-
-
-    // 行分隔符选择
-    const splitBySep: Ref<string[][]> = ref([]);
-    
-    const handleSeparatorChange = (lineSep: string)=>{
-      splitBySep.value = unref(splitByCRLF).map((line)=>line.split(lineSep));
-    }
-    handleSeparatorChange(lineSeparators.comma);
-
-
-    // 文本识别符号选择
-    const splitByQuotes: Ref<string[][]> = ref([]);
-    const handleTextWrapperChange = (textWrapper: string)=>{
-      if(textWrapper===textWrapperSign.empty) return ;
-
-      splitByQuotes.value = unref(splitBySep).map((line)=>line.map((item)=>{
-        return item.split(textWrapper)[1]??item;
-      }));
-    }
-    handleTextWrapperChange(textWrapperSign.double);
-
-
-    // 行点击
-    const columnsNum = unref(splitByQuotes)[0].length;
-    const columnsType = ref(new Array(columnsNum).fill("常规"));
-
-
-    const selectedColumn: Ref<number> = ref(0);
-    const handleTableCellClick = (target: HTMLElement)=>{
-      const columnIndex = target.getAttribute('columnIndex');
-      if(columnIndex!=undefined) selectedColumn.value = parseInt(columnIndex);
-    }
-
-    const handleColumnTypeChange = (target: HTMLInputElement)=>{
-      console.log(target.value);
-      const selectedValue = target.value;
-      selectedValue && (columnsType.value[unref(selectedColumn)]=selectedValue);
-      // const columnIndex = target.value;
-      // if(columnIndex!=undefined) selectedColumn.value = parseInt(columnIndex);
-    }
+    const uploadControl = useUpload();
+    const lineFeedControl = useLineFeed(unref(uploadControl.fileContents));
+    const separatorControl = useSeparator(unref(lineFeedControl.splitByCRLF));
+    const quotesControl = useQuotes(unref(separatorControl.splitBySep));
+    const columnControl = useColumnOperate(unref(quotesControl.splitByQuotes));
 
     return {
-      lineFeedTypes,
+      encodeType,
+      lineFeedType,
       lineSeparators,
       textWrapperSign,
       columnDataType,
 
-      fileContents,
-      splitByCRLF,
-      splitBySep,
-      splitByQuotes,
-      columnsType,
-      selectedColumn,
+      ...uploadControl,
+      ...lineFeedControl,
+      ...separatorControl,
+      ...quotesControl,
+      ...columnControl
 
-      // handleFileChange,
-      // handleEncodeChange,
-      handleLFChange,
-      handleSeparatorChange,
-      handleTextWrapperChange,
-      handleTableCellClick,
-      handleColumnTypeChange
     }
   },
 })
+
+
+
+/*********************************** 文件上传 ***********************************/
+function useUpload(){
+  // const file = ref({} as Blob);
+  // const fileContents: Ref<FileRead> = ref('结果');
+  // const reader: FileReader = new FileReader();
+
+  // const handleFileChange = (target: HTMLInputElement)=>{
+  //   if(!target.files || target.files?.length==0) return ;
+  //   else file.value = target.files[0];
+  // }
+
+  // const handleEncodeChange = (encodeType: string)=>{
+  //   if(!unref(file).type) return;
+
+  //   reader.readAsText(file.value, encodeType);
+  //   reader.onload = function(){
+  //     fileContents.value = reader.result;
+  //   }
+  // }
+
+  const fileContents: Ref<string> = ref(fileRead);
+
+  return {
+    fileContents,
+    // handleFileChange,
+    // handleEncodeChange
+  }
+}
+
+
+
+/*********************************** 换行符选择 ***********************************/
+function useLineFeed(fileContents: string){
+  const splitByCRLF: Ref<string[]> = ref([]);
+
+  const handleLFChange = (lineFeed: string)=>{
+    splitByCRLF.value = unref(fileContents).split(lineFeed);
+  }
+  handleLFChange(lineFeedType.LF);
+
+  return {
+    splitByCRLF,
+    handleLFChange
+  }
+}
+
+
+
+/*********************************** 行分隔符选择 ***********************************/
+function useSeparator(splitByCRLF: string[]){
+  const separatorSelected: Ref<{[key:string]:boolean}> = ref({});
+  const splitBySep: Ref<string[][]> = ref([]);
+  const otherSeparator: Ref<string> = ref('');
+  const needMergeSep: Ref<boolean> = ref(false);
+
+  const avoidSeparatorUndefined = (sep: string|undefined|null): string=>{
+    return sep||lineSeparators.comma;
+  }
+
+  const initSelected = ()=>{
+    Object.keys(lineSeparators).forEach((item)=>{
+      unref(separatorSelected)[item] = false;
+    })
+    unref(separatorSelected)['comma'] = true;
+  }
+  initSelected();
+    
+  const handleSeparatorChange = (target: HTMLInputElement)=>{
+    const lineSep = target.value;
+    if(lineSep===undefined) return ;
+
+    const lineSepLabel = avoidSeparatorUndefined(target.getAttribute('label'));
+    separatorSelected.value[lineSepLabel] = !separatorSelected.value[lineSepLabel];
+    if(!(lineSepLabel==='other')||lineSeparators.other) updateDataBySeparators();
+  }
+
+  const handleSeparatorInput = (val: string)=>{
+    if(val){
+      otherSeparator.value = val[val.length-1];
+      lineSeparators.other = unref(otherSeparator);
+      unref(separatorSelected)['other'] && updateDataBySeparators();
+    }
+  }
+
+  const updateDataBySeparators = ()=>{
+    const usedSeparatorsLabel: string[] = Object.keys(lineSeparators).filter((item)=>separatorSelected.value[item]);
+    const usedSeparators: string[] = usedSeparatorsLabel.map((item)=>lineSeparators[item]) as string[];
+
+    if(usedSeparators.length===0) splitBySep.value = splitByCRLF.map((line)=>[line]);
+    else{
+      const firstSeparator = avoidSeparatorUndefined(usedSeparators.shift());
+      splitBySep.value = splitByCRLF.map((line)=>line.split(firstSeparator));
+
+      if(usedSeparators.length>0){
+        // 对表格中每一行进行多元分隔符分割
+        splitBySep.value = unref(splitBySep).map((line)=>{
+          let targetLine = line;
+          usedSeparators.forEach((sep)=>{
+            targetLine = targetLine.map((item)=>item.split(sep)).reduce((total, item)=>{return total.concat(...item)}, []);
+          })
+          return targetLine;
+        })
+      }
+    } 
+  }
+  updateDataBySeparators();
+
+  const handleMergeSeparators = ()=>{
+    needMergeSep.value = !unref(needMergeSep);
+    if(unref(needMergeSep)){
+      splitBySep.value = unref(splitBySep).map((line)=>line.filter((item)=>item!=''));
+    }else{
+      updateDataBySeparators();
+    }
+  }
+  
+
+  return {
+    splitBySep,
+    separatorSelected,
+    otherSeparator,
+    needMergeSep,
+
+    handleSeparatorChange,
+    handleSeparatorInput,
+    handleMergeSeparators
+  }
+}
+
+
+
+/*********************************** 文本识别符号选择 ***********************************/
+function useQuotes(splitBySep: string[][]){
+  const splitByQuotes: Ref<string[][]> = ref([]);
+  const handleTextWrapperChange = (textWrapper: string)=>{
+    if(textWrapper===textWrapperSign.empty) return ;
+
+    splitByQuotes.value = splitBySep.map((line)=>line.map((item)=>{
+      return item.split(textWrapper)[1]??item;
+    }));
+  }
+  handleTextWrapperChange(textWrapperSign.double);
+
+  return {
+    splitByQuotes,
+    handleTextWrapperChange
+  }
+}
+
+
+
+/*********************************** 行点击 ***********************************/
+function useColumnOperate(splitByQuotes: string[][]){
+  const columnsNum = unref(splitByQuotes)[0].length;
+  const columnsType = ref(new Array(columnsNum).fill("常规"));
+
+
+  const selectedColumn: Ref<number> = ref(0);
+  const handleTableCellClick = (target: HTMLElement)=>{
+    const columnIndex = target.getAttribute('columnIndex');
+    if(columnIndex!=undefined) selectedColumn.value = parseInt(columnIndex);
+  }
+
+  const handleColumnTypeChange = (target: HTMLInputElement)=>{
+    const selectedValue = target.value;
+    selectedValue && (columnsType.value[unref(selectedColumn)]=selectedValue);
+  }
+
+  return {
+    columnsType,
+    selectedColumn,
+    handleTableCellClick,
+    handleColumnTypeChange
+  }
+}
 </script>
 
 <style>
 .content-wrapper{
-  margin: 30px 100px; 
-  padding: 20px; 
+  width: 1000px;
+  margin: 30px auto;
+  padding: 20px;
   border: solid 1px #cccccc;
   text-align: left;
+  overflow: auto;
 }
 
 .content-wrapper td{
