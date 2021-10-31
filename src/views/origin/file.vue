@@ -20,9 +20,6 @@
   </div>
 
   <div>
-    <!-- <select @change="handleSeparatorChange($event.target.value)">
-      <option v-for="(val, key) in lineSeparators" :key="key" :value ="val">{{key}}</option>
-    </select> -->
     <div>
       <span @click="handleSeparatorChange($event.target)">
         <label v-for="(val, key) in lineSeparators" :key="key" style="margin: 20px;"><input type="radio" :value="val" :label="key" :checked="separatorSelected[key]"/>{{key}}</label> 
@@ -82,7 +79,8 @@
 <script lang="ts">
 import { computed, defineComponent, Ref, ref, unref } from 'vue'
 
-type FileRead = string | ArrayBuffer | null;
+type FileReadType = string | ArrayBuffer | null;
+type SeparatorType = string|RegExp;
 
 const encodeType = ["UTF-8", "Unicode", "GBK", "GB2312"];
 
@@ -92,7 +90,7 @@ const lineFeedType = {
   CRLF: '\r\n'
 }
 
-const lineSeparators: {[key: string]: string} = {
+const lineSeparators: { [key: string]: SeparatorType} = {
   comma: ',',
   tab: '\t',
   semicolon: ';',
@@ -176,10 +174,11 @@ export default defineComponent({
 /*********************************** 文件上传 ***********************************/
 function useUpload(){
   // const file = ref({} as Blob);
-  // const fileContents: Ref<FileRead> = ref('结果');
-  // const reader: FileReader = new FileReader();
+  // const fileContents: Ref<FileReadType> = ref('结果');
+  // const reader: FileReadTypeer = new FileReadTypeer();
 
   // const handleFileChange = (target: HTMLInputElement)=>{
+
   //   if(!target.files || target.files?.length==0) return ;
   //   else file.value = target.files[0];
   // }
@@ -228,7 +227,7 @@ function useSeparator(splitByCRLF: string[]){
   const otherSeparator: Ref<string> = ref('');
   const needMergeSep: Ref<boolean> = ref(false);
 
-  const avoidSeparatorUndefined = (sep: string|undefined|null): string=>{
+  const avoidSeparatorUndefined = (sep: SeparatorType|undefined): SeparatorType=>{
     return sep||lineSeparators.comma;
   }
 
@@ -244,22 +243,35 @@ function useSeparator(splitByCRLF: string[]){
     const lineSep = target.value;
     if(lineSep===undefined) return ;
 
-    const lineSepLabel = avoidSeparatorUndefined(target.getAttribute('label'));
+    const lineSepLabel = target.getAttribute('label')||'comma';
     separatorSelected.value[lineSepLabel] = !separatorSelected.value[lineSepLabel];
-    if(!(lineSepLabel==='other')||lineSeparators.other) updateDataBySeparators();
+    // if(!(lineSepLabel==='other')||lineSeparators.other) updateDataBySeparators();
+    updateDataBySeparators();
   }
 
   const handleSeparatorInput = (val: string)=>{
+    otherSeparator.value = val;
+    
     if(val){
-      otherSeparator.value = val[val.length-1];
-      lineSeparators.other = unref(otherSeparator);
-      unref(separatorSelected)['other'] && updateDataBySeparators();
+      // // 限定输入单个字符
+      // otherSeparator.value = val[val.length-1];
+      
+      // 正则分割
+      try{
+        lineSeparators.other = new RegExp(unref(otherSeparator));
+        unref(separatorSelected)['other'] && updateDataBySeparators();
+      }catch(error){
+        console.log(error);
+      }
+    }
+    else{
+      lineSeparators.other = '';
     }
   }
 
   const updateDataBySeparators = ()=>{
-    const usedSeparatorsLabel: string[] = Object.keys(lineSeparators).filter((item)=>separatorSelected.value[item]);
-    const usedSeparators: string[] = usedSeparatorsLabel.map((item)=>lineSeparators[item]) as string[];
+    const usedSeparatorsLabel: string[] = Object.keys(lineSeparators).filter((item)=>separatorSelected.value[item]&&lineSeparators[item]);
+    const usedSeparators: SeparatorType[] = usedSeparatorsLabel.map((item)=>lineSeparators[item]) as SeparatorType[];
 
     if(usedSeparators.length===0) splitBySep.value = splitByCRLF.map((line)=>[line]);
     else{
