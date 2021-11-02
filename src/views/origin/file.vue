@@ -175,7 +175,7 @@ export default defineComponent({
 function useUpload(){
   // const file = ref({} as Blob);
   // const fileContents: Ref<FileReadType> = ref('结果');
-  // const reader: FileReadTypeer = new FileReadTypeer();
+  // const reader: FileReader = new FileReader();
 
   // const handleFileChange = (target: HTMLInputElement)=>{
 
